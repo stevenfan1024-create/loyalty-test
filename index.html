@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheat Rate Test 出轨率测试</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#111827;
+      --soft:#f3f4f6;
+      --danger:#b91c1c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{
+      max-width:900px;
+      margin:0 auto;
+      padding:32px 20px 60px;
+    }
+    .hero{
+      text-align:center;
+      padding:32px 16px 20px;
+    }
+    .hero h1{
+      font-size:40px;
+      margin:0 0 10px;
+      letter-spacing:-0.02em;
+    }
+    .hero p{
+      color:var(--muted);
+      margin:0 auto 16px;
+      max-width:680px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.04);
+      padding:24px;
+      margin-bottom:18px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .badge{
+      display:inline-block;
+      padding:6px 12px;
+      background:var(--soft);
+      border-radius:999px;
+      font-size:14px;
+      color:var(--muted);
+    }
+    .progress{
+      height:10px;
+      width:100%;
+      background:var(--soft);
+      border-radius:999px;
+      overflow:hidden;
+      margin:10px 0 4px;
+    }
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      transition:width .25s ease;
+    }
+    .notice{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
+    }
+    .q-card{
+      padding:22px;
+    }
+    .q-title{
+      font-size:20px;
+      font-weight:700;
+      margin:0 0 14px;
+    }
+    .options{
+      display:grid;
+      gap:10px;
+    }
+    .option{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .option:hover{
+      border-color:#cfd4dc;
+      transform:translateY(-1px);
+    }
+    .option input{
+      margin:0;
+      transform:scale(1.1);
+    }
+    .option.selected{
+      border-color:#111827;
+      background:#f9fafb;
+    }
+    .actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    button{
+      border:none;
+      border-radius:14px;
+      padding:12px 18px;
+      font-size:15px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .btn-main{
+      background:var(--accent);
+      color:#fff;
+    }
+    .btn-sub{
+      background:var(--soft);
+      color:var(--text);
+    }
+    button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+    .hidden{display:none}
+    .score-big{
+      font-size:64px;
+      font-weight:800;
+      line-height:1;
+      margin:8px 0 4px;
+      letter-spacing:-0.03em;
+    }
+    .level{
+      font-size:22px;
+      font-weight:700;
+      margin:0 0 8px;
+    }
+    .bar-row{
+      margin:16px 0;
+    }
+    .bar-label{
+      display:flex;
+      justify-content:space-between;
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .bar{
+      height:12px;
+      background:var(--soft);
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      background:var(--accent);
+    }
+    .small{
+      color:var(--muted);
+      font-size:14px;
+    }
+    .footer-note{
+      font-size:13px;
+      color:var(--muted);
+    }
+    @media (max-width:640px){
+      .hero h1{font-size:30px}
+      .score-big{font-size:48px}
+      .q-title{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>你说你专一。<br>先别急，做完再说。</h1>
+      <p>30 道题，测你在感情里的边界感、诱惑管理和失控倾向。测之前都觉得自己很稳。</p>
+    </section>
+
+    <section id="intro" class="card">
+      <div class="topbar">
+        <span class="badge">娱乐测试 / 30 题 / 5 级量表</span>
+        <button class="btn-main" onclick="startTest()">开始测试</button>
+      </div>
+      <p class="notice">注意：这不是心理诊断，也不能真的判断一个人会不会出轨，只能当成互动型娱乐测试来看。</p>
+    </section>
+
+    <section id="testSection" class="hidden">
+      <div class="card">
+        <div class="topbar">
+          <strong>测试进行中</strong>
+          <span id="progressText" class="badge">0 / 30</span>
+        </div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <p class="notice">所有题都选完才可以查看结果。</p>
+      </div>
+
+      <div id="questionsBox"></div>
+
+      <div class="card actions">
+        <button class="btn-sub" onclick="resetTest()">重新开始</button>
+        <button id="submitBtn" class="btn-main" onclick="showResult()" disabled>提交并查看结果</button>
+      </div>
+    </section>
+
+    <section id="resultSection" class="hidden">
+      <div class="card">
+        <span class="badge">测试结果</span>
+        <div class="score-big" id="finalScore">0%</div>
+        <p class="level" id="finalLevel"></p>
+        <p id="finalText"></p>
+      </div>
+
+      <div class="card">
+        <h3>五个维度</h3>
+        <div id="dimensionBox"></div>
+      </div>
+
+      <div class="card">
+        <h3>结果说明</h3>
+        <p id="adviceText"></p>
+        <p class="footer-note">再次提醒：这个测试只适合做内容产品、社交传播或娱乐互动，不适合当成对别人进行真实指控的证据。</p>
+      </div>
+
+      <div class="card actions">
+        <button class="btn-sub" onclick="backToHome()">返回首页</button>
+        <button class="btn-main" onclick="resetTest()">重新测试</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const scaleLabels = [
+      { text: "非常不同意", value: 0 },
+      { text: "有点不同意", value: 1 },
+      { text: "中立", value: 2 },
+      { text: "有点同意", value: 3 },
+      { text: "非常同意", value: 4 }
+    ];
+
+    const questions = [
+      { dim:"边界感", reverse:false, text:"如果我和别人聊天很投缘，就算已经有对象，我也愿意继续保持暧昧空间。" },
+      { dim:"边界感", reverse:false, text:"我觉得恋爱后和异性单独深夜聊天并没有什么问题。" },
+      { dim:"边界感", reverse:false, text:"只要没有被发现，一些越界行为也不算太严重。" },
+      { dim:"边界感", reverse:true,  text:"我会主动和别人保持清楚边界，避免让对象没有安全感。" },
+      { dim:"边界感", reverse:true,  text:"在关系里，我认为忠诚不只是结果，也是日常分寸感。" },
+
+      { dim:"刺激追求", reverse:false, text:"我很容易对新鲜的人产生兴趣，就算现在的关系没有问题。" },
+      { dim:"刺激追求", reverse:false, text:"我喜欢被别人追、被别人注意的感觉。" },
+      { dim:"刺激追求", reverse:false, text:"如果有人明显欣赏我，我会享受这种感觉并愿意继续接触。" },
+      { dim:"刺激追求", reverse:true,  text:"稳定和长期信任，比一时的新鲜感更吸引我。" },
+      { dim:"刺激追求", reverse:false, text:"平淡期一来，我就会开始想别的可能性。" },
+
+      { dim:"责任感", reverse:true,  text:"我答应过的关系承诺，会认真遵守。" },
+      { dim:"责任感", reverse:true,  text:"就算感情变淡，我也会先坦白沟通，而不是先找别人。" },
+      { dim:"责任感", reverse:false, text:"我有时会先满足自己的情绪，再考虑对象感受。" },
+      { dim:"责任感", reverse:true,  text:"我觉得隐瞒感情相关事实，本身就是对关系的伤害。" },
+      { dim:"责任感", reverse:false, text:"只要我最后还是回到对象身边，中间做过什么不那么重要。" },
+
+      { dim:"诱惑管理", reverse:false, text:"当别人主动示好时，我不太会立刻拉开距离。" },
+      { dim:"诱惑管理", reverse:false, text:"喝酒、聚会、旅行这些场景下，我更容易做冲动决定。" },
+      { dim:"诱惑管理", reverse:true,  text:"我知道自己在哪些情境容易越界，也会提前避开。" },
+      { dim:"诱惑管理", reverse:false, text:"只要气氛到位，我可能会做出平时不会做的事。" },
+      { dim:"诱惑管理", reverse:true,  text:"面对明显诱惑时，我通常能及时停下来。" },
+
+      { dim:"关系满意度", reverse:false, text:"当我在当前关系里感到不满足时，我会更容易把注意力放到别人身上。" },
+      { dim:"关系满意度", reverse:false, text:"如果对象最近忽略我，我会想从别处获得情绪价值。" },
+      { dim:"关系满意度", reverse:true,  text:"关系出现问题时，我更想修复，而不是转移目标。" },
+      { dim:"关系满意度", reverse:false, text:"我会把‘被理解’当成和别人靠近的理由。" },
+      { dim:"关系满意度", reverse:true,  text:"我认为真正成熟的关系，是不爽的时候也先处理问题本身。" },
+
+      { dim:"诚实透明", reverse:false, text:"我会删聊天记录来避免不必要的麻烦。" },
+      { dim:"诚实透明", reverse:false, text:"有些事只要不说，就不算欺骗。" },
+      { dim:"诚实透明", reverse:true,  text:"我能接受在关系里保持基本透明，而不是刻意遮掩。" },
+      { dim:"诚实透明", reverse:false, text:"我觉得善意隐瞒在感情里很正常。" },
+      { dim:"诚实透明", reverse:true,  text:"我更希望关系建立在真实和可验证的信任上。" }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function startTest(){
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("resultSection").classList.add("hidden");
+      document.getElementById("testSection").classList.remove("hidden");
+      renderQuestions();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function renderQuestions(){
+      const box = document.getElementById("questionsBox");
+      box.innerHTML = "";
+      questions.forEach((q, i) => {
+        const card = document.createElement("div");
+        card.className = "card q-card";
+        card.innerHTML = `
+          <p class="q-title">${i + 1}. ${q.text}</p>
+          <div class="options" id="options-${i}"></div>
+        `;
+        box.appendChild(card);
+
+        const optionsBox = card.querySelector(`#options-${i}`);
+        scaleLabels.forEach((opt, idx) => {
+          const label = document.createElement("label");
+          label.className = "option";
+          label.innerHTML = `
+            <input type="radio" name="q${i}" value="${opt.value}" ${answers[i] === opt.value ? "checked" : ""}>
+            <span>${opt.text}</span>
+          `;
+          if (answers[i] === opt.value) label.classList.add("selected");
+          label.querySelector("input").addEventListener("change", () => {
+            answers[i] = Number(opt.value);
+            [...optionsBox.children].forEach(n => n.classList.remove("selected"));
+            label.classList.add("selected");
+            updateProgress();
+          });
+          optionsBox.appendChild(label);
+        });
+      });
+    }
+
+    function updateProgress(){
+      const done = answers.filter(v => v !== null).length;
+      const total = questions.length;
+      const percent = Math.round(done / total * 100);
+      document.getElementById("progressText").textContent = `${done} / ${total}`;
+      document.getElementById("progressBar").style.width = `${percent}%`;
+      document.getElementById("submitBtn").disabled = done !== total;
+    }
+
+    function normalizeScore(answer, reverse){
+      return reverse ? (4 - answer) : answer;
+    }
+
+    function compute(){
+      let total = 0;
+      const dims = {};
+      questions.forEach((q, i) => {
+        const score = normalizeScore(answers[i], q.reverse);
+        total += score;
+        if (!dims[q.dim]) dims[q.dim] = [];
+        dims[q.dim].push(score);
+      });
+
+      const maxTotal = questions.length * 4;
+      const riskPercent = Math.round((total / maxTotal) * 100);
+
+      const dimPercents = {};
+      Object.keys(dims).forEach(dim => {
+        const arr = dims[dim];
+        const sum = arr.reduce((a,b)=>a+b,0);
+        dimPercents[dim] = Math.round(sum / (arr.length * 4) * 100);
+      });
+
+      return { riskPercent, dimPercents };
+    }
+
+    function resultText(score){
+      if(score <= 20){
+        return {
+          level:"很低风险型",
+          text:"你的边界感、责任感和透明度整体偏高。你更重视长期信任，不太容易被短期刺激带走。",
+          advice:"这个分数说明你在关系里相对稳定。继续保持清楚边界、及时沟通和一致的行为，比任何测试结果都更重要。"
+        };
+      }else if(score <= 40){
+        return {
+          level:"低到中等风险型",
+          text:"你整体比较稳，但在新鲜感、情绪缺口或特定场景下，还是可能出现动摇。",
+          advice:"你最需要注意的是关系平淡期和外界认可感。把问题说出来，比去外面找补偿更安全。"
+        };
+      }else if(score <= 60){
+        return {
+          level:"中等风险型",
+          text:"你并不是一定会越界，但在边界、诱惑管理或关系不满时，风险明显会上升。",
+          advice:"这个分数很适合做自我提醒。你可以重点看自己哪一维分数高，先改环境，再改习惯。"
+        };
+      }else if(score <= 80){
+        return {
+          level:"偏高风险型",
+          text:"你对新鲜感、外界认可或隐瞒空间的接受度比较高，关系稳定性容易受影响。",
+          advice:"建议你认真想清楚自己到底要的是稳定关系，还是持续刺激。如果想要长期关系，就要建立更强边界。"
+        };
+      }else{
+        return {
+          level:"高风险型",
+          text:"你的结果显示你在边界、冲动、透明度和责任感上都比较容易失守。",
+          advice:"这不代表你一定会做出某种行为，但说明你需要非常警惕自己的环境、习惯和决策方式。现实里真正重要的是诚实、选择和自控。"
+        };
+      }
+    }
+
+    function showResult(){
+      const { riskPercent, dimPercents } = compute();
+      const info = resultText(riskPercent);
+
+      document.getElementById("testSection").classList.add("hidden");
+      document.getElementById("resultSection").classList.remove("hidden");
+      document.getElementById("finalScore").textContent = `${riskPercent}%`;
+      document.getElementById("finalLevel").textContent = info.level;
+      document.getElementById("finalText").textContent = info.text;
+      document.getElementById("adviceText").textContent = info.advice;
+
+      const dimBox = document.getElementById("dimensionBox");
+      dimBox.innerHTML = "";
+      Object.entries(dimPercents).forEach(([name, val]) => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        row.innerHTML = `
+          <div class="bar-label"><span>${name}</span><span>${val}%</span></div>
+          <div class="bar"><div style="width:${val}%"></div></div>
+        `;
+        dimBox.appendChild(row);
+      });
+
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function resetTest(){
+      answers = new Array(questions.length).fill(null);
+      document.getElementById("resultSection").classList.add("hidden");
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("testSection").classList.remove("hidden");
+      renderQuestions();
+      updateProgress();
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function backToHome(){
+      answers = new Array(questions.length).fill(null);
+      document.getElementById("resultSection").classList.add("hidden");
+      document.getElementById("testSection").classList.add("hidden");
+      document.getElementById("intro").classList.remove("hidden");
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+  </script>
+</body>
+</html>
